@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from importlib import import_module
 
 from robogame_engine.exceptions import RobogameException
@@ -14,6 +15,12 @@ class Theme(object):
         self.mod_path = 'default_theme' if mod_path is None else mod_path
         try:
             self.module = import_module(self.mod_path)
+            # Due to some constants already defined in base theme,
+            # it should be overridden to be available from __getattr__
+            test = re.compile(r"^[A-Z][A-Z_]+$")
+            for k in dir(constants):
+                if test.match(k) is not None and hasattr(self.module, k):
+                    self.__dict__[k] = self.module.__dict__[k]
         except ImportError:
             raise RobogameException("Can't load theme {}".format(self.mod_path))
 
