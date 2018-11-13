@@ -57,7 +57,7 @@ class Scene(CanLogging):
 
     @property
     def teams(self):
-        return self.__teams.copy()
+        return self.__teams[:]
 
     @property
     def teams_count(self):
